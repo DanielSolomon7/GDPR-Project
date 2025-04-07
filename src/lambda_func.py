@@ -1,2 +1,4 @@
+import boto3
+
 def lambda_handler():
-    pass
+    s3 = boto3.client("s3")
