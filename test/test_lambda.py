@@ -40,23 +40,25 @@ class TestLambdaFunc:
     @mock_aws
     def test_function_returns_a_dict(self, storage_bucket, target_bucket):
         input = {
-    "file_to_obfuscate": "people_data.csv",
-    "pii_fields": ["name", "email_address"]
-}
+            "file_to_obfuscate": "people_data.csv",
+            "pii_fields": ["name", "email_address"],
+        }
         output = lambda_handler(input, "")
         assert isinstance(output, dict)
 
     @mock_aws
-    def test_function_creates_csv_file_with_obfuscated_data(self, storage_bucket, target_bucket):
+    def test_function_creates_csv_file_with_obfuscated_data(
+        self, storage_bucket, target_bucket
+    ):
         s3 = target_bucket
         input = {
-    "file_to_obfuscate": "people_data.csv",
-    "pii_fields": ["name", "email_address"]
-}
+            "file_to_obfuscate": "people_data.csv",
+            "pii_fields": ["name", "email_address"],
+        }
         output = lambda_handler(input, "")
         assert output == {
-        "result": "File obfuscated_people_data.csv has been created and uploaded to the target bucket."
-    }
+            "result": "File obfuscated_people_data.csv has been created and uploaded to the target bucket."
+        }
 
         response = s3.get_object(
             Bucket="ds-target-bucket-123", Key="obfuscated_people_data.csv"
@@ -65,21 +67,20 @@ class TestLambdaFunc:
         df = pd.read_csv(BytesIO(content))
         # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
         #     print(df)
-        assert list(df.columns) == ["student_id",
-                                    "name",
-                                    "course",
-                                    "graduation_date",
-                                    "email_address"]
-        assert list(df.iloc[0]) == [1,'***','Software','2024-03-31','***']
-        assert list(df.iloc[8]) == [9,'***','Data','2024-06-30','***']
+        assert list(df.columns) == [
+            "student_id",
+            "name",
+            "course",
+            "graduation_date",
+            "email_address",
+        ]
+        assert list(df.iloc[0]) == [1, "***", "Software", "2024-03-31", "***"]
+        assert list(df.iloc[8]) == [9, "***", "Data", "2024-06-30", "***"]
 
     @mock_aws
     def test_function_handles_invalid_file_name(self, storage_bucket, target_bucket):
         s3 = target_bucket
-        input = {
-    "file_to_obfuscate": "hi",
-    "pii_fields": ["name", "email_address"]
-}
+        input = {"file_to_obfuscate": "hi", "pii_fields": ["name", "email_address"]}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
         assert "error" in str(e.value)
@@ -87,41 +88,27 @@ class TestLambdaFunc:
     @mock_aws
     def test_function_handles_invalid_column_name(self, storage_bucket, target_bucket):
         s3 = target_bucket
-        input = {
-    "file_to_obfuscate": "people_data.csv",
-    "pii_fields": ["name", 5]
-}
+        input = {"file_to_obfuscate": "people_data.csv", "pii_fields": ["name", 5]}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
-        assert (
-            str(e.value)
-            == "Invalid column name given: 5"
-        )
+        assert str(e.value) == "Invalid column name given: 5"
 
     @mock_aws
-    def test_function_handles_non_list_given_for_column_names(self, storage_bucket, target_bucket):
+    def test_function_handles_non_list_given_for_column_names(
+        self, storage_bucket, target_bucket
+    ):
         s3 = target_bucket
-        input = {
-    "file_to_obfuscate": "people_data.csv",
-    "pii_fields": "name"
-}
+        input = {"file_to_obfuscate": "people_data.csv", "pii_fields": "name"}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
-        assert (
-            str(e.value)
-            == "pii_fields must be a list of valid column names."
-        )
+        assert str(e.value) == "pii_fields must be a list of valid column names."
 
     @mock_aws
-    def test_function_handles_empty_list_given_for_column_names(self, storage_bucket, target_bucket):
+    def test_function_handles_empty_list_given_for_column_names(
+        self, storage_bucket, target_bucket
+    ):
         s3 = target_bucket
-        input = {
-    "file_to_obfuscate": "people_data.csv",
-    "pii_fields": []
-}
+        input = {"file_to_obfuscate": "people_data.csv", "pii_fields": []}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
-        assert (
-            str(e.value)
-            == "No column names given in pii_fields list."
-        )
+        assert str(e.value) == "No column names given in pii_fields list."
