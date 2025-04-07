@@ -25,7 +25,8 @@ data "aws_iam_policy_document" "lambda_get_policy_doc" {
       actions = [
         "s3:GetObject"
       ]
-      resources = ["${aws_s3_bucket.storage_bucket.arn}"]
+      resources = ["${aws_s3_bucket.storage_bucket.arn}",
+                  "${aws_s3_bucket.storage_bucket.arn}/*"]
     }
 }
 
@@ -49,7 +50,8 @@ data "aws_iam_policy_document" "lambda_put_policy_doc" {
       actions = [
         "s3:PutObject"
       ]
-      resources = ["${aws_s3_bucket.target_bucket.arn}"]
+      resources = ["${aws_s3_bucket.target_bucket.arn}",
+                  "${aws_s3_bucket.target_bucket.arn}/*"]
     }
 }
 

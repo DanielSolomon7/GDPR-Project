@@ -11,5 +11,6 @@ resource "aws_lambda_function" "lambda_func" {
     handler = "lambda_func.lambda_handler"
     timeout = 30
     source_code_hash = data.archive_file.lambda_code.output_base64sha256
-    runtime = "python3.11"
+    runtime = "python3.12"
+    layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python312:14"]
 }
