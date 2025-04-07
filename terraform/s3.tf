@@ -1,3 +1,4 @@
+## S3 Storage Bucket
 resource "aws_s3_bucket" "storage_bucket" {
   bucket = "ds-storage-bucket-123"
 
