@@ -1,0 +1,14 @@
+venv
+**/.pycache
+**/__pycache__
+.env*
+
+# Terraform lock file
+**/.terraform.lock.hcl
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
