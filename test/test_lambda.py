@@ -112,3 +112,22 @@ class TestLambdaFunc:
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
         assert str(e.value) == "No column names given in pii_fields list."
+
+    @mock_aws
+    def test_function_handles_invalid_key_given(self, storage_bucket, target_bucket):
+        s3 = target_bucket
+        input = {"hello": "people_data.csv", "pii_fields": ["name", "email_address"]}
+        with pytest.raises(Exception) as e:
+            lambda_handler(input, "")
+        assert (
+            str(e.value)
+            == "Invalid keys given in JSON - there must be only two keys: 'file_to_obfuscate' and 'pii_fields'."
+        )
+
+    @mock_aws
+    def test_function_handles_non_json_given(self, storage_bucket, target_bucket):
+        s3 = target_bucket
+        input = 5
+        with pytest.raises(Exception) as e:
+            lambda_handler(input, "")
+        assert str(e.value) == "Invalid event input - not a JSON."
