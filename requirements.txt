@@ -4,3 +4,4 @@ pytest
 pandas
 pyarrow
 bandit
+flake8
