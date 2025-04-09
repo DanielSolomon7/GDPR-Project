@@ -16,3 +16,4 @@ def upload_data_file(file_name):
     except Exception as e:
         raise(e)
 
+upload_data_file(input("Enter the name of the data file:"))

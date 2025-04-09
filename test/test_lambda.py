@@ -17,7 +17,7 @@ def storage_bucket():
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
         s3.upload_file(
-            "test/people_data.csv",
+            "people_data.csv",
             test_bucket,
             "people_data.csv",
         )

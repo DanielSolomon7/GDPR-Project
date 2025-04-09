@@ -21,9 +21,9 @@ resource "aws_s3_bucket" "target_bucket" {
 }
 
 ## Upload people_data.csv File to Storage Bucket
-resource "aws_s3_object" "people_data_csv_file_upload" {
-  bucket = "ds-storage-bucket-123"
-  key    = "people_data.csv"
-  source      = "${path.module}/../test/people_data.csv"
-  source_hash = filemd5("${path.module}/../test/people_data.csv")
-}
+# resource "aws_s3_object" "people_data_csv_file_upload" {
+#   bucket = "ds-storage-bucket-123"
+#   key    = "people_data.csv"
+#   source      = "${path.module}/../test/people_data.csv"
+#   source_hash = filemd5("${path.module}/../test/people_data.csv")
+# }
