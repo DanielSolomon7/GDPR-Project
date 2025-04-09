@@ -1,13 +1,7 @@
 from src.upload_data_file import upload_data_file
 import pytest
-from unittest.mock import patch
 import boto3
 from moto import mock_aws
-
-# @pytest.fixture
-# def mock_rand_int():
-#     with patch('upload_data_file.input', return_value="people_data.csv") as randint_mock:
-#         yield randint_mock
 
 
 @pytest.fixture(scope="function")
