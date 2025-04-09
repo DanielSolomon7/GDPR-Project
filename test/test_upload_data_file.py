@@ -1,7 +1,13 @@
 from src.upload_data_file import upload_data_file
 import pytest
+from unittest.mock import patch
 import boto3
 from moto import mock_aws
+
+# @pytest.fixture
+# def mock_rand_int():
+#     with patch('upload_data_file.input', return_value="people_data.csv") as randint_mock:
+#         yield randint_mock
 
 
 @pytest.fixture(scope="function")
@@ -19,26 +25,30 @@ def empty_storage_bucket():
 class TestUploadDataFile:
     @mock_aws
     def test_function_returns_a_dict(self, empty_storage_bucket):
-        test_file_name = "test/people_data.csv"
+        test_file_name = "people_data.csv"
         output = upload_data_file(test_file_name)
         assert isinstance(output, dict)
 
     @mock_aws
-    def test_function_uploads_local_csv_file_to_storage_bucket(self, empty_storage_bucket):
+    def test_function_uploads_local_csv_file_to_storage_bucket(
+        self, empty_storage_bucket
+    ):
         s3 = empty_storage_bucket
-        test_file_name = "test/people_data.csv"
+        test_file_name = "people_data.csv"
         output = upload_data_file(test_file_name)
         expected = {"result": "success"}
         assert output == expected
 
         response = s3.list_objects(
-                Bucket="ds-storage-bucket-123",
-            )
-        
+            Bucket="ds-storage-bucket-123",
+        )
+
         assert response["Contents"][0]["Key"] == test_file_name
 
     @mock_aws
-    def test_function_handles_file_name_of_non_existent_file(self, empty_storage_bucket):
+    def test_function_handles_file_name_of_non_existent_file(
+        self, empty_storage_bucket
+    ):
         s3 = empty_storage_bucket
         test_file_name = "hi.csv"
 

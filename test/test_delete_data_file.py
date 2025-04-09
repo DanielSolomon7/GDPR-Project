@@ -7,4 +7,3 @@ from moto import mock_aws
 class TestDeleteDataFile:
     def test_(self):
         pass
-
