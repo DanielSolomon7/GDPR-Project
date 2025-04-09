@@ -6,6 +6,14 @@ Activate virtual environment: source venv/bin/activate
 
 In the root directory, export PYTHONPATH to the current working directory: export PYTHONPATH=$(pwd)
 
+Install packages: pip install -r requirements.txt
+
+Run unit tests on the Python code: pytest test -vvvrP
+
+Run security tests on the Python code: bandit src/lambda_func.py src/upload_data_file.py src/run_upload_data_file.py src/delete_data_file.py src/run_delete_data_file.py test/test_lambda_func.py test/test_upload_data_file.py test/test_delete_data_file.py
+
+Run PEP-8 tests on the code: flake8 src test
+
 Go into terraform file: cd terraform
 
 Set up the Terraform files: terraform init
