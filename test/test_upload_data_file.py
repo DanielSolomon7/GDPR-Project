@@ -5,7 +5,7 @@ from moto import mock_aws
 
 
 @pytest.fixture(scope="function")
-def storage_bucket():
+def empty_storage_bucket():
     with mock_aws():
         s3 = boto3.client("s3")
         test_bucket = "ds-storage-bucket-123"
@@ -13,17 +13,35 @@ def storage_bucket():
             Bucket=test_bucket,
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        s3.upload_file(
-            "test/people_data.csv",
-            test_bucket,
-            "people_data.csv",
-        )
         yield s3
 
 
 class TestUploadDataFile:
     @mock_aws
-    def test_function_returns_a_dict(self):
-        input = "test/people_data.csv"
-        output = upload_data_file(input)
+    def test_function_returns_a_dict(self, empty_storage_bucket):
+        test_file_name = "test/people_data.csv"
+        output = upload_data_file(test_file_name)
         assert isinstance(output, dict)
+
+    @mock_aws
+    def test_function_uploads_local_csv_file_to_storage_bucket(self, empty_storage_bucket):
+        s3 = empty_storage_bucket
+        test_file_name = "test/people_data.csv"
+        output = upload_data_file(test_file_name)
+        expected = {"result": "success"}
+        assert output == expected
+
+        response = s3.list_objects(
+                Bucket="ds-storage-bucket-123",
+            )
+        
+        assert response["Contents"][0]["Key"] == test_file_name
+
+    @mock_aws
+    def test_function_handles_file_name_of_non_existent_file(self, empty_storage_bucket):
+        s3 = empty_storage_bucket
+        test_file_name = "hi.csv"
+
+        with pytest.raises(Exception) as e:
+            upload_data_file(test_file_name)
+        assert str(e.value) == "Given file does not exist."
