@@ -1,2 +1,2 @@
-def upload_data_file():
-    pass
+def upload_data_file(file_name):
+    return {}

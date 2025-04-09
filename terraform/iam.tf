@@ -1,4 +1,4 @@
-## Role Assumption
+## Assume Role for Lambda
 data "aws_iam_policy_document" "assume_role" {
     statement {
         effect = "Allow"
@@ -12,13 +12,13 @@ data "aws_iam_policy_document" "assume_role" {
     }  
 }
 
-## Role
+## Role for Lambda
 resource "aws_iam_role" "role_for_lambda" {
     name = "role_for_lambda"
     assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
-## S3 Policy Document for Storage Bucket - GetObject
+## GetObject permission from Storage Bucket for Lambda
 data "aws_iam_policy_document" "lambda_get_policy_doc" {
     statement {
       effect = "Allow"
@@ -30,20 +30,20 @@ data "aws_iam_policy_document" "lambda_get_policy_doc" {
     }
 }
 
-## S3 Policy for Storage Bucket
+## Policy for GetObject permission
 resource "aws_iam_policy" "lambda_get_policy" {
     name_prefix = "lambda-get-"
     policy = data.aws_iam_policy_document.lambda_get_policy_doc.json
 
 }
 
-## S3 Get Attachment
+## Attachment for GetObject permission
 resource "aws_iam_role_policy_attachment" "lambda_s3_get_attachment" {
     role = aws_iam_role.role_for_lambda.name
     policy_arn = resource.aws_iam_policy.lambda_get_policy.arn
 }
 
-## S3 Policy Document for Target Bucket - PutObject
+## ## PutObject permission from Target Bucket for Lambda
 data "aws_iam_policy_document" "lambda_put_policy_doc" {
     statement {
       effect = "Allow"
@@ -55,15 +55,64 @@ data "aws_iam_policy_document" "lambda_put_policy_doc" {
     }
 }
 
-## S3 Policy for Target Bucket
+## Policy for PutObject permission
 resource "aws_iam_policy" "lambda_put_policy" {
     name_prefix = "lambda-put-"
     policy = data.aws_iam_policy_document.lambda_put_policy_doc.json
 
 }
 
-## S3 Put Attachment
+## Attachment for PutObject permission
 resource "aws_iam_role_policy_attachment" "lambda_s3_put_attachment" {
     role = aws_iam_role.role_for_lambda.name
     policy_arn = resource.aws_iam_policy.lambda_put_policy.arn
+}
+
+
+## Assume Role for State Machine
+data "aws_iam_policy_document" "assume_role_for_state_machine" {
+    statement {
+        effect = "Allow"
+        
+        principals {
+          type = "Service"
+          identifiers = ["states.amazonaws.com"]
+        }
+
+    actions = ["sts:AssumeRole"]
+    }  
+}
+
+## Role for State Machine
+resource "aws_iam_role" "role_for_state_machine" {
+    name = "role_for_state_machine"
+    assume_role_policy = data.aws_iam_policy_document.assume_role_for_state_machine.json
+}
+
+## Policy Document for State Machine to LambdaInvoke
+data "aws_iam_policy_document" "state_machine_role_policy" {
+  
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+
+    resources = ["arn:aws:lambda:eu-west-2:750552037637:function:lambda_func"]#["${aws_lambda_function.lambda_func.arn}:*"]
+  }
+
+}
+
+## Policy for LambdaInvoke permission
+resource "aws_iam_policy" "lambda_invoke_policy" {
+    name_prefix = "lambda-invoke-"
+    policy = data.aws_iam_policy_document.state_machine_role_policy.json
+
+}
+
+## Attachment for LambdaInvoke permission
+resource "aws_iam_role_policy_attachment" "lambda_invoke_attachment" {
+    role = aws_iam_role.role_for_state_machine.name
+    policy_arn = resource.aws_iam_policy.lambda_invoke_policy.arn
 }

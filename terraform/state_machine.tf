@@ -1,7 +1,7 @@
-## State Machine for Step Dunction for Lambda
-resource "aws_sfn_state_machine" "sfn_state_machine" {
+## State Machine for Step Function for Lambda
+resource "aws_sfn_state_machine" "state_machine" {
   name     = "state-machine-for-lambda"
-  role_arn = aws_iam_role.iam_for_sfn.arn ## Work on this...
+  role_arn = aws_iam_role.role_for_state_machine.arn
 
   definition = <<EOF
 {
