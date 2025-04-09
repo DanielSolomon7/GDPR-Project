@@ -23,7 +23,8 @@ data "aws_iam_policy_document" "lambda_get_policy_doc" {
     statement {
       effect = "Allow"
       actions = [
-        "s3:GetObject"
+        "s3:GetObject",
+        "s3:ListBucket"
       ]
       resources = ["${aws_s3_bucket.storage_bucket.arn}",
                   "${aws_s3_bucket.storage_bucket.arn}/*"]
@@ -99,7 +100,7 @@ data "aws_iam_policy_document" "state_machine_role_policy" {
       "lambda:InvokeFunction"
     ]
 
-    resources = ["arn:aws:lambda:eu-west-2:750552037637:function:lambda_func"]#["${aws_lambda_function.lambda_func.arn}:*"]
+    resources = ["${aws_lambda_function.lambda_func.arn}"]#["arn:aws:lambda:eu-west-2:750552037637:function:lambda_func"]
   }
 
 }

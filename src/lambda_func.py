@@ -1,12 +1,14 @@
 import boto3
 import pandas as pd
 from io import BytesIO, StringIO
+import logging
 
 
 def lambda_handler(event, context):
+    logging.info(event['pii_fields'])
     if not isinstance(event, dict):
         raise TypeError("Invalid event input - not a JSON.")
-    if not isinstance(event["pii_fields"], list):
+    if not isinstance(event['pii_fields'], list):
         raise TypeError("pii_fields must be a list of valid column names.")
     if len(event["pii_fields"]) == 0:
         raise ValueError("No column names given in pii_fields list.")
