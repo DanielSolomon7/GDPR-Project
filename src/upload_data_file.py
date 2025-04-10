@@ -12,7 +12,7 @@ def upload_data_file(file_name):
         )
         return {"result": "success"}
 
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         raise FileNotFoundError("Given file does not exist.")
     except Exception as e:
         raise (e)

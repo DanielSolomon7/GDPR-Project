@@ -43,7 +43,6 @@ class TestUploadDataFile:
     def test_function_handles_file_name_of_non_existent_file(
         self, empty_storage_bucket
     ):
-        s3 = empty_storage_bucket
         test_file_name = "hi.csv"
 
         with pytest.raises(Exception) as e:

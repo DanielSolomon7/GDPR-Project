@@ -10,13 +10,13 @@ install-requirements: create-environment
 	source venv/bin/activate && $(PIP) install -r requirements.txt
 
 unit-test: install-requirements
-	source venv/bin/activate && PYTHONPATH=$(PYTHONPATH) && pytest test/test_lambda_func.py -vvv
+	source venv/bin/activate && PYTHONPATH=$(PYTHONPATH) && pytest test -vvv
 
 security-check: install-requirements
-	source venv/bin/activate && bandit src/lambda_func.py && pip-audit -r ./requirements.txt
+	source venv/bin/activate && bandit src/lambda_func.py src/upload_data_file.py src/delete_data_file.py src/run_upload_data_file.py src/run_delete_data_file.py && pip-audit -r ./requirements.txt
 
 check-pep8-compliance: install-requirements
-	source venv/bin/activate && flake8 src/lambda_func.py
+	source venv/bin/activate && flake8 src test
 
 run-checks: unit-test security-check check-pep8-compliance
 
