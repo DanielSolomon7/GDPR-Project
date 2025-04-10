@@ -1,19 +1,25 @@
-# GDPR-Project
+# GDPR-Obfuscator-Project
+This project is a GDPR Obfuscator tool, which uses AWS cloud infrastructure.
+The project uses S3 buckets to store the data, AWS Lambda to run the code, and Terraform is used to deploy the cloud infrastructure.
+The tool takes data from an unobfuscated CSV file, in the 'storage' S3 bucket, and creates a new version of the file with the chosen fields obfuscated, and uploads this to the 'target' S3 bucket.
 
 ## Setup
-Create virtual environment: python -m venv venv
-
-Activate virtual environment: source venv/bin/activate
+Create virtual environment:
+```bash
+ make create-environment
+```
 
 In the root directory, export PYTHONPATH to the current working directory: export PYTHONPATH=$(pwd)
 
-Install packages: pip install -r requirements.txt
+Install packages:
+```bash
+make install-requirements
+```
 
-Run unit tests on the Python code: pytest test -vvvrP
-
-Run security tests on the Python code: bandit src/lambda_func.py src/upload_data_file.py src/run_upload_data_file.py src/delete_data_file.py src/run_delete_data_file.py test/test_lambda_func.py test/test_upload_data_file.py test/test_delete_data_file.py
-
-Run PEP-8 tests on the code: flake8 src test
+Run checks on the Lambda Python code - unit, security, and PEP-8:
+```bash
+make run-checks
+```
 
 ## Deployment
 Go into terraform file: cd terraform

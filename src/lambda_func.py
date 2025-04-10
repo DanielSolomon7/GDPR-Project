@@ -1,14 +1,12 @@
 import boto3
 import pandas as pd
 from io import BytesIO, StringIO
-import logging
 
 
 def lambda_handler(event, context):
-    logging.info(event['pii_fields'])
     if not isinstance(event, dict):
         raise TypeError("Invalid event input - not a JSON.")
-    if not isinstance(event['pii_fields'], list):
+    if not isinstance(event["pii_fields"], list):
         raise TypeError("pii_fields must be a list of valid column names.")
     if len(event["pii_fields"]) == 0:
         raise ValueError("No column names given in pii_fields list.")
@@ -16,7 +14,8 @@ def lambda_handler(event, context):
         event.keys()
     ) != ["pii_fields", "file_to_obfuscate"]:
         raise ValueError(
-            "Invalid keys given in JSON - there must be only two keys: 'file_to_obfuscate' and 'pii_fields'."
+            "Invalid keys given in JSON - there must "
+            "be only two keys: 'file_to_obfuscate' and 'pii_fields'."
         )
 
     try:
@@ -37,7 +36,8 @@ def lambda_handler(event, context):
                 if column_name in list(df.columns):
                     df.at[i, column_name] = "***"
                 else:
-                    raise ValueError(f"Invalid column name given: {column_name}")
+                    raise ValueError("Invalid column name given: "
+                                     f"{column_name}")
 
         """Create new CSV file from DataFrame"""
         csv_buffer = StringIO()
@@ -51,7 +51,8 @@ def lambda_handler(event, context):
         )
 
         return {
-            "result": f"File {obfuscated_file_name} has been created and uploaded to the target bucket."
+            "result": f"File {obfuscated_file_name} has been "
+            "created and uploaded to the target bucket."
         }
 
     except Exception as e:

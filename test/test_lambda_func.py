@@ -4,7 +4,6 @@ from moto import mock_aws
 import pytest
 import pandas as pd
 from io import BytesIO
-from pprint import pprint
 
 
 @pytest.fixture(scope="function")
@@ -38,10 +37,12 @@ def target_bucket():
 
 class TestLambdaFunc:
     @mock_aws
-    def test_function_returns_a_dict(self, storage_bucket, target_bucket):
+    def test_function_returns_a_dict(
+        self, storage_bucket, target_bucket
+    ):
         input = {
             "file_to_obfuscate": "people_data.csv",
-            "pii_fields": ["name", "email_address"],
+            "pii_fields": ["name", "email_address"]
         }
         output = lambda_handler(input, "")
         assert isinstance(output, dict)
@@ -53,11 +54,13 @@ class TestLambdaFunc:
         s3 = target_bucket
         input = {
             "file_to_obfuscate": "people_data.csv",
-            "pii_fields": ["name", "email_address"],
+            "pii_fields": ["name", "email_address"]
         }
         output = lambda_handler(input, "")
         assert output == {
-            "result": "File obfuscated_people_data.csv has been created and uploaded to the target bucket."
+            "result": "File obfuscated_people_data.csv "
+            "has been created and uploaded to "
+            "the target bucket."
         }
 
         response = s3.get_object(
@@ -65,8 +68,7 @@ class TestLambdaFunc:
         )
         content = response["Body"].read()
         df = pd.read_csv(BytesIO(content))
-        # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-        #     print(df)
+
         assert list(df.columns) == [
             "student_id",
             "name",
@@ -78,17 +80,21 @@ class TestLambdaFunc:
         assert list(df.iloc[8]) == [9, "***", "Data", "2024-06-30", "***"]
 
     @mock_aws
-    def test_function_handles_invalid_file_name(self, storage_bucket, target_bucket):
-        s3 = target_bucket
-        input = {"file_to_obfuscate": "hi", "pii_fields": ["name", "email_address"]}
+    def test_function_handles_invalid_file_name(
+        self, storage_bucket, target_bucket
+    ):
+        input = {"file_to_obfuscate": "hi",
+                 "pii_fields": ["name", "email_address"]}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
         assert "error" in str(e.value)
 
     @mock_aws
-    def test_function_handles_invalid_column_name(self, storage_bucket, target_bucket):
-        s3 = target_bucket
-        input = {"file_to_obfuscate": "people_data.csv", "pii_fields": ["name", 5]}
+    def test_function_handles_invalid_column_name(
+        self, storage_bucket, target_bucket
+    ):
+        input = {"file_to_obfuscate": "people_data.csv",
+                 "pii_fields": ["name", 5]}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
         assert str(e.value) == "Invalid column name given: 5"
@@ -97,36 +103,41 @@ class TestLambdaFunc:
     def test_function_handles_non_list_given_for_column_names(
         self, storage_bucket, target_bucket
     ):
-        s3 = target_bucket
-        input = {"file_to_obfuscate": "people_data.csv", "pii_fields": "name"}
+        input = {"file_to_obfuscate": "people_data.csv",
+                 "pii_fields": "name"}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
-        assert str(e.value) == "pii_fields must be a list of valid column names."
+        assert str(e.value) == ("pii_fields must be a "
+                                "list of valid column names.")
 
     @mock_aws
     def test_function_handles_empty_list_given_for_column_names(
         self, storage_bucket, target_bucket
     ):
-        s3 = target_bucket
-        input = {"file_to_obfuscate": "people_data.csv", "pii_fields": []}
+        input = {"file_to_obfuscate": "people_data.csv",
+                 "pii_fields": []}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
         assert str(e.value) == "No column names given in pii_fields list."
 
     @mock_aws
-    def test_function_handles_invalid_key_given(self, storage_bucket, target_bucket):
-        s3 = target_bucket
-        input = {"hello": "people_data.csv", "pii_fields": ["name", "email_address"]}
+    def test_function_handles_invalid_key_given(
+        self, storage_bucket, target_bucket
+    ):
+        input = {"hello": "people_data.csv",
+                 "pii_fields": ["name", "email_address"]}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
         assert (
             str(e.value)
-            == "Invalid keys given in JSON - there must be only two keys: 'file_to_obfuscate' and 'pii_fields'."
+            == "Invalid keys given in JSON - there must be "
+            "only two keys: 'file_to_obfuscate' and 'pii_fields'."
         )
 
     @mock_aws
-    def test_function_handles_non_json_given(self, storage_bucket, target_bucket):
-        s3 = target_bucket
+    def test_function_handles_non_json_given(
+        self, storage_bucket, target_bucket
+    ):
         input = 5
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
