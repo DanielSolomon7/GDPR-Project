@@ -74,3 +74,22 @@ class TestDeleteDataFile:
             Bucket="ds-target-bucket-123",
         )
         assert "Contents" not in response
+
+    @mock_aws
+    def test_function_handles_invalid_data_type_input(
+        self, storage_bucket, target_bucket
+    ):
+        test_input = 5
+
+        with pytest.raises(TypeError) as e:
+            delete_data_file(test_input)
+        assert str(e.value) == "Given file name must be a string"
+
+    @mock_aws
+    def test_function_handles_non_existent_file(
+        self, storage_bucket, target_bucket
+    ):
+        test_file_name = "Non Existent!!!"
+        output = delete_data_file(test_file_name)
+        expected = {"result": "success"}
+        assert output == expected

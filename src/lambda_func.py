@@ -4,6 +4,22 @@ from io import BytesIO, StringIO
 
 
 def lambda_handler(event, context):
+    """Takes the name of a file, and uploads the file in the
+    S3 storage bucket
+
+    Paramaters:
+        event (dict): a dict of the json entered into the Lambda.
+                      should contains the following keys:
+                      'file_to_obfuscate' (str): the name of the CSV
+                                                 file to obfuscate
+                      'pii_fields' (list): a list of strings of the
+                                           columns to obfuscate
+
+    Returns:
+        dict: a dict with a key of 'result', and a value of 'success',
+        saying that the file was obfuscated and uploaded to the target
+        bucket
+    """
     if not isinstance(event, dict):
         raise TypeError("Invalid event input - not a JSON.")
     if not isinstance(event["pii_fields"], list):

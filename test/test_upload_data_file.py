@@ -48,3 +48,12 @@ class TestUploadDataFile:
         with pytest.raises(Exception) as e:
             upload_data_file(test_file_name)
         assert str(e.value) == "Given file does not exist."
+
+    def test_function_handles_non_csv_file_given(
+        self, empty_storage_bucket
+    ):
+        test_file_name = "people_data.json"
+
+        with pytest.raises(Exception) as e:
+            upload_data_file(test_file_name)
+        assert str(e.value) == "Given file must be CSV."
