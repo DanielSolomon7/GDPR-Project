@@ -36,7 +36,7 @@ make run-checks
 In the root directory, export PYTHONPATH to the current working directory: export PYTHONPATH=$(pwd)
 
 ## Cloud Infrastructure Deployment
-Go into terraform file:
+Go into the terraform file:
 ```bash
 cd terraform
 ```
