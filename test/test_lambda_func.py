@@ -80,10 +80,10 @@ class TestLambdaFunc:
         assert list(df.iloc[8]) == [9, "***", "Data", "2024-06-30", "***"]
 
     @mock_aws
-    def test_function_handles_invalid_file_name(
+    def test_function_handles_non_existent_file_name(
         self, storage_bucket, target_bucket
     ):
-        input = {"file_to_obfuscate": "hi",
+        input = {"file_to_obfuscate": "hi.csv",
                  "pii_fields": ["name", "email_address"]}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
@@ -153,3 +153,13 @@ class TestLambdaFunc:
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
         assert str(e.value) == "Invalid event input - not a JSON."
+
+    @mock_aws
+    def test_function_handles_non_csv_file_given(
+        self, storage_bucket, target_bucket
+    ):
+        input = {"file_to_obfuscate": "people_data.json",
+                 "pii_fields": ["name", "email_address"]}
+        with pytest.raises(Exception) as e:
+            lambda_handler(input, "")
+        assert str(e.value) == "Given file must be CSV."

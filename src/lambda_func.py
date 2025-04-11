@@ -36,6 +36,8 @@ def lambda_handler(event, context):
         )
     if not isinstance(event["file_to_obfuscate"], str):
         raise TypeError("Invalid 'file_to_obfuscate' input - not a string.")
+    if event["file_to_obfuscate"][-4:] != ".csv":
+        raise ValueError("Given file must be CSV.")
 
     try:
         s3 = boto3.client("s3")
