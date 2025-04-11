@@ -87,7 +87,18 @@ class TestLambdaFunc:
                  "pii_fields": ["name", "email_address"]}
         with pytest.raises(Exception) as e:
             lambda_handler(input, "")
-        assert "error" in str(e.value)
+        assert str(e.value) == "Given file not found."
+
+    @mock_aws
+    def test_function_handles_invalid_type_for_file_name(
+        self, storage_bucket, target_bucket
+    ):
+        input = {"file_to_obfuscate": 5,
+                 "pii_fields": ["name", "email_address"]}
+        with pytest.raises(Exception) as e:
+            lambda_handler(input, "")
+        assert str(e.value) == ("Invalid 'file_to_obfuscate' input "
+                                "- not a string.")
 
     @mock_aws
     def test_function_handles_invalid_column_name(

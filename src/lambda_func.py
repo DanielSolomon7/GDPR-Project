@@ -1,6 +1,7 @@
 import boto3
 import pandas as pd
 from io import BytesIO, StringIO
+from botocore.exceptions import ClientError
 
 
 def lambda_handler(event, context):
@@ -33,6 +34,8 @@ def lambda_handler(event, context):
             "Invalid keys given in JSON - there must "
             "be only two keys: 'file_to_obfuscate' and 'pii_fields'."
         )
+    if not isinstance(event["file_to_obfuscate"], str):
+        raise TypeError("Invalid 'file_to_obfuscate' input - not a string.")
 
     try:
         s3 = boto3.client("s3")
@@ -71,5 +74,10 @@ def lambda_handler(event, context):
             "created and uploaded to the target bucket."
         }
 
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "NoSuchKey":
+            raise FileNotFoundError("Given file not found.")
+        else:
+            raise (e)
     except Exception as e:
         raise (e)
