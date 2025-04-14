@@ -18,7 +18,8 @@ resource "aws_iam_role" "role_for_lambda" {
     assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
-## GetObject permission from Storage Bucket for Lambda
+
+## GetObject and ListBucket permissions for Storage Bucket for Lambda
 data "aws_iam_policy_document" "lambda_get_policy_doc" {
     statement {
       effect = "Allow"
@@ -31,20 +32,21 @@ data "aws_iam_policy_document" "lambda_get_policy_doc" {
     }
 }
 
-## Policy for GetObject permission
+## Policy for GetObject and ListBucket permissions
 resource "aws_iam_policy" "lambda_get_policy" {
     name_prefix = "lambda-get-"
     policy = data.aws_iam_policy_document.lambda_get_policy_doc.json
 
 }
 
-## Attachment for GetObject permission
+## Attachment for GetObject and ListBucket permissions
 resource "aws_iam_role_policy_attachment" "lambda_s3_get_attachment" {
     role = aws_iam_role.role_for_lambda.name
     policy_arn = resource.aws_iam_policy.lambda_get_policy.arn
 }
 
-## ## PutObject permission from Target Bucket for Lambda
+
+## PutObject permission for Target Bucket for Lambda
 data "aws_iam_policy_document" "lambda_put_policy_doc" {
     statement {
       effect = "Allow"
