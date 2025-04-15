@@ -18,6 +18,13 @@ def obfuscate(json_string):
     response = client.start_execution(stateMachineArn=arn)
 
     print(response)
+
+    file_name = json_string["file_to_obfuscate"]
+
+    s3 = boto3.client("s3")
+    s3.download_file("ds-target-bucket-123",
+                     f"obfuscated_{file_name}",
+                     f"obfuscated_{file_name}")
     
     
     return {"result": "success"}
