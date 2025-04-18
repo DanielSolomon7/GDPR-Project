@@ -10,7 +10,7 @@ install-requirements: create-environment
 	source venv/bin/activate && $(PIP) install -r requirements.txt
 
 unit-test: install-requirements
-	source venv/bin/activate && PYTHONPATH=$(PYTHONPATH) && pytest test -vvv
+	source venv/bin/activate && PYTHONPATH=$(PYTHONPATH) pytest test -vvv
 
 security-check: install-requirements
 	source venv/bin/activate && bandit src/lambda_func.py src/upload_data_file.py src/delete_data_file.py src/run_upload_data_file.py src/run_delete_data_file.py && pip-audit -r ./requirements.txt
