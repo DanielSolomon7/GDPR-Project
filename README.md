@@ -33,7 +33,10 @@ Run checks on the Lambda Python code - unit, security, and PEP-8:
 make run-checks
 ```
 
-In the root directory, export PYTHONPATH to the current working directory: export PYTHONPATH=$(pwd)
+In the root directory, export PYTHONPATH to the current working directory:
+```bash
+export PYTHONPATH=$(pwd)
+```
 
 ## Cloud Infrastructure Deployment
 Go into the terraform file:
