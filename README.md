@@ -70,7 +70,7 @@ A user input should appear asking you to enter the name of the file - make sure 
 
 
 ## Running the Obfuscation Tool and Creating an Obfuscated File
-Log into AWS, and run the 'state-machine-for-lambda' state machine - entering a JSON string with a 'file_to_obfuscate' key and a value of a string of the file name, and a 'pii_fields' key, with a value of an array of strings of column names of the desired columns to obfuscate. For example:
+Log into AWS, and run the 'state-machine-for-lambda' state machine - entering a JSON string with a 'file_to_obfuscate' key, with a value of a string of the file name, and a 'pii_fields' key, with a value of an array of strings of column names of the desired columns to obfuscate. For example:
 ```json
 {
     "file_to_obfuscate": "people_data.csv",
