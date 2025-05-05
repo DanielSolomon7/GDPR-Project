@@ -33,6 +33,11 @@ Run checks on the Lambda Python code - unit, security, and PEP-8:
 make run-checks
 ```
 
+Activate the virtual enironment:
+```bash
+source venv/bin/activate
+```
+
 In the root directory, export PYTHONPATH to the current working directory:
 ```bash
 export PYTHONPATH=$(pwd)
@@ -60,17 +65,22 @@ terraform apply
 ```
 
 ## Uploading Unobfuscated CSV File to Storage S3 Bucket
-Go into the root directory, and make sure the CSV data file is in the root directory.
+Go into the root directory:
+```bash
+cd ..
+```
+
+Make sure the CSV data file to obfuscate is in the root directory.
 
 Upload the CSV data file to the 'storage' S3 Bucket, by entering in the command line:
-```python
+```bash
 python src/run_upload_data_file.py
 ```
 A user input should appear asking you to enter the name of the file - make sure it is the correct name, otherwise an error will occur. If no error occurs, the file has been uploaded.
 
 
 ## Running the Obfuscation Tool and Creating an Obfuscated File
-Log into AWS, and run the 'state-machine-for-lambda' state machine - entering a JSON string with a 'file_to_obfuscate' key, with a value of a string of the file name, and a 'pii_fields' key, with a value of an array of strings of column names of the desired columns to obfuscate. For example:
+Log into AWS, and run the 'state-machine-for-lambda' state machine - entering a JSON string with a 'file_to_obfuscate' key, with a value of a string of the file name, and a 'pii_fields' key, with a value of an array of strings of column names of the desired columns to obfuscate (the column names need to be spelled exactly the same as they are in the CSV file). For example:
 ```json
 {
     "file_to_obfuscate": "people_data.csv",
@@ -85,9 +95,14 @@ Before running terraform destroy, delete files from the storage and target bucke
 ```bash
 python src/run_delete_data_file.py
 ```
-Then enter the name of the file, making sure it is the correct name.
+Then enter the name of the original CSV file (not the obfuscated file), making sure it is the correct name. Both the orignal and obfuscated CSV file should be deleted from the the storage and target buckets.
 
-To delete the cloud infrastructure, cd into the terraform folder and run:
+To delete the cloud infrastructure, cd back into the terraform folder:
+```bash
+cd terraform
+```
+
+Then run:
 ```bash
 terraform destroy
 ```
